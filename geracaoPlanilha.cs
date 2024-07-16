@@ -68,7 +68,7 @@ namespace quantitativosExtraidosTQS
 
             var novoArquivo = new FileInfo(caminhoDoArquivo);
             Stream caminhoListaPadrao;
-            caminhoListaPadrao = Assembly.GetExecutingAssembly().GetManifestResourceStream("quantitativosExtraidosTQS.padrao.quantitativoPadrao.xlsx");
+            caminhoListaPadrao = Assembly.GetExecutingAssembly().GetManifestResourceStream("Quant_Tqs.padrao.quantitativoPadrao.xlsx");
             using (var package = new ExcelPackage(caminhoListaPadrao))
             {
                 var cabecalho = package.Workbook.Worksheets["Resumo"];
