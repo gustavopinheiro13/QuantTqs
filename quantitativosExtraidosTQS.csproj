@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <PackageIcon>financa.png</PackageIcon>
+    <ApplicationIcon>financa.ico</ApplicationIcon>
+    <FileVersion>1.0.0.5</FileVersion>
+    <AssemblyVersion>1.0.0.5</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="padrao\quantitativoPadrao.xlsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="financa.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="padrao\quantitativoPadrao.xlsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\Downloads\financa.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="5.7.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="EPPlus" Version="6.2.6" />
+  </ItemGroup>
+
+</Project>
