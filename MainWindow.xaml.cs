@@ -26,6 +26,7 @@ using Microsoft.Win32;
 using System.Xml;
 using System.Text.RegularExpressions;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using quantitativosExtraidosTQS;
 
 namespace quantitativosExtraidosTQS
 {
@@ -292,6 +293,7 @@ namespace quantitativosExtraidosTQS
         }
         public MainWindow()
         {
+
             //Console.WriteLine("Digite o caminho para a pasta:");
             string folderPath;
             folderPath = selecionarPasta();
@@ -311,9 +313,10 @@ namespace quantitativosExtraidosTQS
                     mensagemSucesso();
 
                 }
+
                 //InitializeComponent();
             }
-            Close();
+            Application.Current.Shutdown();
         }
         public void mensagemSucesso()
         {
@@ -354,3 +357,15 @@ namespace quantitativosExtraidosTQS
 
         }
     }
+public class Program
+{
+    [STAThread]
+    public static void Main()
+    {
+        Application app = new Application();
+        MainWindow mainWindow = new MainWindow();
+        app.Run(mainWindow);
+
+
+    }
+}
