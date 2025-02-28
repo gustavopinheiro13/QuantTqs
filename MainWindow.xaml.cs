@@ -25,6 +25,7 @@ using System.IO.Packaging;
 using Microsoft.Win32;
 using System.Xml;
 using System.Text.RegularExpressions;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace quantitativosExtraidosTQS
 {
@@ -98,7 +99,8 @@ namespace quantitativosExtraidosTQS
             //public List<Ferro> armaduras { get; set; } = new List<Ferro>();
 
         }
-        public class Ferro {
+        public class Ferro
+        {
             public string nome { get; set; }
             public int posicao { get; set; }
             public double bitola { get; set; }
@@ -133,7 +135,8 @@ namespace quantitativosExtraidosTQS
             return Regex.Replace(texto, @"\s{3,}", "  ");
         }
 
-        static Edificio gerarEdificio(string caminhoPasta) {
+        static Edificio gerarEdificio(string caminhoPasta)
+        {
             Edificio edificio = new Edificio();
             string[] lstFiles = Directory.GetFiles(caminhoPasta, "*.lst", SearchOption.AllDirectories);
 
@@ -161,7 +164,7 @@ namespace quantitativosExtraidosTQS
                     {
 
                         List<string> linha_dividida = NormalizarEspacos(linha).TrimEnd().TrimStart().Split("  ").ToList();
-                        if (linha_dividida.Count() == 6  && int.TryParse(linha_dividida[0], out int numero) || linha_dividida.Count() == 7 && int.TryParse(linha_dividida[0], out int numero2) || linha_dividida.Count() == 5 && int.TryParse(linha_dividida[0], out int numero3))
+                        if (linha_dividida.Count() == 6 && int.TryParse(linha_dividida[0], out int numero) || linha_dividida.Count() == 7 && int.TryParse(linha_dividida[0], out int numero2) || linha_dividida.Count() == 5 && int.TryParse(linha_dividida[0], out int numero3))
                         {
                             linha_dividida.RemoveAll(string.IsNullOrEmpty);
                             List<string> definicao_linha_limpa = new List<string>();
@@ -294,11 +297,14 @@ namespace quantitativosExtraidosTQS
             folderPath = selecionarPasta();
             if (folderPath == null)
             {
-                MensagemFalha();
+                MensagemErro("Pasta do projeto não selecionada. Selecione a pasta raiz do Projeto", 415);
+                Environment.Exit(415);
+
             }
-            else {
+            else
+            {
                 Edificio novoEdificio = gerarEdificio(folderPath);
-                
+
                 if (novoEdificio != null)
                 {
                     geracaoPlanilha.SalvarListaEmXLS(novoEdificio);
@@ -313,23 +319,31 @@ namespace quantitativosExtraidosTQS
         {
             MessageBox.Show("Sucesso, Quantitativos salvos!", "Concluido", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        public void MensagemFalha()
+        public static void MensagemErro(string mensagem_erro, int codigo_erro)
         {
-            MessageBox.Show("Falha, Selecione a pasta do Projeto", "Sair", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(mensagem_erro, "Erro " + codigo_erro.ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
         }
         static string selecionarPasta()
         {
-            var dialog = new OpenFileDialog
+            var dialog = new CommonOpenFileDialog
             {
-                ValidateNames = false,
-                CheckFileExists = false,
-                CheckPathExists = true,
-                FileName = "Selecionar pasta",
-                Filter = "Projeto TQS|no.files"
+                IsFolderPicker = true,
+                Title = "Selecione a pasta do projeto"
             };
-            if (dialog.ShowDialog() == true)
+
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                return System.IO.Path.GetDirectoryName(dialog.FileName);
+                string pastaSelecionada = dialog.FileName;
+                string arquivo = System.IO.Path.Combine(pastaSelecionada, "EDIFICIO.BDE");
+
+                if (File.Exists(arquivo))
+                {
+                    return pastaSelecionada;
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
@@ -338,8 +352,5 @@ namespace quantitativosExtraidosTQS
             }
         }
 
-
-
+        }
     }
-}
-
