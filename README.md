@@ -4,6 +4,18 @@ O **Extrator de Quantitativos TQS** é uma ferramenta desenvolvida para auxiliar 
 
 O programa foi criado em **C#** usando **.NET 7.0**.
 
+![Tela de resumo geral](./imagens/Screenshot_1.png)
+_Tela de resumo geral_
+
+![Tela de resumo de aço](./imagens/Screenshot_2.png)
+_Tela de resumo de aço_
+
+![Quantitativo de concreto descritivo](./imagens/Screenshot_3.png)
+_Quantitativo de concreto descritivo_
+
+![Quantitativo de aço descritivo](./imagens/Screenshot_4.png)
+_Quantitativo de aço descritivo_
+
 ## Modo de Uso
 
 1. Abra o arquivo `Quant_Tqs.exe`.
