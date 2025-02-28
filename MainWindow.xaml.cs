@@ -94,7 +94,7 @@ namespace quantitativosExtraidosTQS
             public double areaEstruturada { get; set; }
             public double areaFormas { get; set; }
             public double volumeConcreto { get; set; }
-            public double volumeTopo { get; set; }
+            //public double volumeTopo { get; set; }
             //public List<Ferro> armaduras { get; set; } = new List<Ferro>();
 
         }
@@ -229,7 +229,7 @@ namespace quantitativosExtraidosTQS
                             novaPilar.areaEstruturada = double.Parse('0' + linhaAtualProcessada[1].Replace("-", ""), CultureInfo.InvariantCulture);
                             novaPilar.areaFormas = double.Parse('0' + linhaAtualProcessada[2].Replace("-", ""), CultureInfo.InvariantCulture);
                             novaPilar.volumeConcreto = double.Parse('0' + linhaAtualProcessada[3].Replace("-", ""), CultureInfo.InvariantCulture);
-                            novaPilar.volumeTopo = double.Parse('0' + linhaAtualProcessada[4].Replace("-", ""), CultureInfo.InvariantCulture);
+                            //novaPilar.volumeTopo = double.Parse('0' + linhaAtualProcessada[4].Replace("-", ""), CultureInfo.InvariantCulture);
                             listaPilares.Add(novaPilar);
                         }
                         else if (linhaAtualProcessada.Count == 10 && linhaAtualProcessada[0].ToString().Contains("L"))
