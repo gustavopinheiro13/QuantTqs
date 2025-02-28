@@ -60,9 +60,11 @@ namespace quantitativosExtraidosTQS
                 {
                     File.Delete(caminhoDoArquivo);
                 }
-                catch (Exception)
+                catch (System.IO.IOException)
                 {
-                    throw;
+                    MainWindow.MensagemErro("Sem permissão para editar a planilha, verifique se a planilha está aberta ou que você possui permissão para altera-la e tente novamente. Quantitativo não salvo, saindo", 403);
+                    Environment.Exit(403);
+
                 }
             }
 
@@ -78,7 +80,9 @@ namespace quantitativosExtraidosTQS
                 cabecalho = package.Workbook.Worksheets["Aco_Pranchado"];
                 cabecalho.Cells[2, 2].Value = edificio.cliente;
                 cabecalho.Cells[3, 2].Value = edificio.nomeEdificio;
-
+                cabecalho = package.Workbook.Worksheets["Aco_Pranchado_bruto"];
+                cabecalho.Cells[2, 2].Value = edificio.cliente;
+                cabecalho.Cells[3, 2].Value = edificio.nomeEdificio;
                 salvarListaDescritiva(package, edificio);
                 salvarListaResumo(package, edificio);
                 salvarListaAco(package, edificio);
@@ -371,8 +375,8 @@ namespace quantitativosExtraidosTQS
             //var planilha = package.Workbook.Worksheets.Add("Entradas");
             bool temProtensao = true, quantitativoPreliminar = true;
             var planilhaAco = pacote.Workbook.Worksheets["Aco_Pranchado_bruto"];
-            int linha_inicial = 5;
-            int linhaAtual = linha_inicial;
+            int linhaInicial = 5;
+            int linhaAtual = linhaInicial;
             List<linhaPlanilha> listaLinhas = new List<linhaPlanilha>();
             listaLinhas.Reverse();
             bool pintar = true;
@@ -407,10 +411,20 @@ namespace quantitativosExtraidosTQS
                 }
                 else { pintar = true; }
             }
+            linhaAtual += edificio.ferro_resumo_pranchado.Count();
+            linhaAtual++;
+            for (int numero_coluna = 4; numero_coluna <= 5; numero_coluna++)
+            {
+                planilhaAco.Cells[linhaAtual, numero_coluna].Formula = "SUM(" + NumeroParaLetra(numero_coluna) + (linhaInicial + 1).ToString() + ":" + NumeroParaLetra(numero_coluna) + (linhaAtual - 1).ToString() + ")";
+                planilhaAco.Cells[linhaAtual, numero_coluna].Style.Numberformat.Format = "0.00";
+
+            }
+
+            planilhaAco.DeleteRow(linhaInicial);
 
             planilhaAco = pacote.Workbook.Worksheets["Aco_Pranchado"];
             int coluna_atual = 3;
-
+            linhaAtual = linhaInicial;
             for (int i = 0; i < numero_bitolas_distintas -1; i++)
             {
                 planilhaAco.InsertColumn(coluna_atual, 1);
@@ -441,13 +455,13 @@ namespace quantitativosExtraidosTQS
             foreach (double bitola_distinta in bitolasDistintas)
             {
                 coluna_atual++;
-                planilhaAco.Cells[linha_inicial, coluna_atual].Value = bitola_distinta;
-                planilhaAco.Cells[linha_inicial, coluna_atual].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                planilhaAco.Cells[linha_inicial, coluna_atual].Style.Numberformat.Format = "0.00";
+                planilhaAco.Cells[linhaInicial, coluna_atual].Value = bitola_distinta;
+                planilhaAco.Cells[linhaInicial, coluna_atual].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                planilhaAco.Cells[linhaInicial, coluna_atual].Style.Numberformat.Format = "0.00";
             }
             for (int i = 0; i <= numero_bitolas_distintas +1; i++)
             {
-                for (int j = 1; j < linha_inicial + 1; j++)
+                for (int j = 1; j < linhaInicial + 1; j++)
                 {
                     planilhaAco.Cells[j, coluna_inicial + i].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                     planilhaAco.Cells[j, coluna_inicial + i].Style.Border.Top.Style = ExcelBorderStyle.Thin;
@@ -457,39 +471,43 @@ namespace quantitativosExtraidosTQS
             foreach (ResumoPrancha resumo_formatado in listaResumoPrancha)
             {
                 coluna_atual = coluna_inicial;
-                planilhaAco.Cells[linha_inicial + 1, coluna_atual].Value = resumo_formatado.Prancha;
+                planilhaAco.Cells[linhaInicial + 1, coluna_atual].Value = resumo_formatado.Prancha;
+                planilhaAco.Cells[linhaInicial + 1, coluna_atual].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+
                 coluna_atual++;
                 double pesoTotal = 0;
                 foreach (KeyValuePair<double,double> bitola_peso in resumo_formatado)
                 {
-                    planilhaAco.Cells[linha_inicial + 1, coluna_atual].Value = bitola_peso.Value;
-                    planilhaAco.Cells[linha_inicial + 1, coluna_atual].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    planilhaAco.Cells[linha_inicial + 1, coluna_atual].Style.Numberformat.Format = "0.00";
+                    planilhaAco.Cells[linhaInicial + 1, coluna_atual].Value = bitola_peso.Value;
+                    planilhaAco.Cells[linhaInicial + 1, coluna_atual].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    planilhaAco.Cells[linhaInicial + 1, coluna_atual].Style.Numberformat.Format = "0.00";
                     coluna_atual++;
                     pesoTotal += bitola_peso.Value;
                 }
-                planilhaAco.Cells[linha_inicial + 1, coluna_atual].Formula = "SUM(" + NumeroParaLetra(coluna_inicial +1) + (linha_inicial + 1).ToString() + ":" + NumeroParaLetra(coluna_atual-1) + (linha_inicial + 1).ToString() + ")";
-                planilhaAco.Cells[linha_inicial + 1, coluna_atual].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                planilhaAco.Cells[linha_inicial + 1, coluna_atual].Style.Numberformat.Format = "0.00";
+                planilhaAco.Cells[linhaInicial + 1, coluna_atual].Formula = "SUM(" + NumeroParaLetra(coluna_inicial +1) + (linhaInicial + 1).ToString() + ":" + NumeroParaLetra(coluna_atual-1) + (linhaInicial + 1).ToString() + ")";
+                planilhaAco.Cells[linhaInicial + 1, coluna_atual].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                planilhaAco.Cells[linhaInicial + 1, coluna_atual].Style.Numberformat.Format = "0.00";
+                planilhaAco.Cells[linhaInicial + 1, coluna_atual].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+
                 if (pintar)
                 {
                     pintar = false;
-                    ExcelRange intervaloLinha = planilhaAco.Cells[linha_inicial + 1, 1, linha_inicial + 1, numero_bitolas_distintas + 2];
+                    ExcelRange intervaloLinha = planilhaAco.Cells[linhaInicial + 1, 1, linhaInicial + 1, numero_bitolas_distintas + 2];
                     intervaloLinha.Style.Fill.PatternType = ExcelFillStyle.Solid;
                     intervaloLinha.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(238, 240, 242));
                 }
                 else { pintar = true; }
-                planilhaAco.InsertRow(linha_inicial + 1, 1);
+                planilhaAco.InsertRow(linhaInicial + 1, 1);
                 linhaAtual++;
 
             }
-            planilhaAco.DeleteRow(linha_inicial + 1);
+            planilhaAco.DeleteRow(linhaInicial + 1);
             //linhaAtual++;
             for (int i = 0; i <= numero_bitolas_distintas; i++)
             {
-                planilhaAco.Cells[linhaAtual, coluna_inicial + 1 + i].Formula = "SUM(" + NumeroParaLetra(coluna_inicial + 1 + i) + (linha_inicial +1).ToString() + ":" + NumeroParaLetra(coluna_inicial + 1 + i) + (linhaAtual - 1).ToString() + ")";//linha.resumoAcoCA50CA60;;
-                planilhaAco.Cells[linha_inicial -1, coluna_inicial + 1 + i].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                planilhaAco.Cells[linha_inicial -1, coluna_inicial + 1 + i].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(9, 230, 176));
+                planilhaAco.Cells[linhaAtual, coluna_inicial + 1 + i].Formula = "SUM(" + NumeroParaLetra(coluna_inicial + 1 + i) + (linhaInicial +1).ToString() + ":" + NumeroParaLetra(coluna_inicial + 1 + i) + (linhaAtual - 1).ToString() + ")";//linha.resumoAcoCA50CA60;;
+                planilhaAco.Cells[linhaInicial -1, coluna_inicial + 1 + i].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                planilhaAco.Cells[linhaInicial -1, coluna_inicial + 1 + i].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(9, 230, 176));
                 planilhaAco.Cells[linhaAtual, coluna_inicial + 1 + i].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 planilhaAco.Cells[linhaAtual, coluna_inicial + 1 + i].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(9, 230, 176));
                 planilhaAco.Cells[linhaAtual, coluna_inicial + 1 + i].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
