@@ -94,7 +94,6 @@ namespace quantitativosExtraidosTQS
             //var planilha = package.Workbook.Worksheets.Add("Entradas");
             bool temProtensao = true, quantitativoPreliminar = true;
             var planilhaResumo = pacote.Workbook.Worksheets["Resumo"];
-            int linhaInicial = 6;
             List<linhaPlanilha> listaLinhas = new List<linhaPlanilha>();
             foreach (Pavimento pavimento in edificio.listaPavimentos)
             {
@@ -190,7 +189,7 @@ namespace quantitativosExtraidosTQS
             //planilhaResumo.Cells[linhaAtual, 5].Value = edificio.resumoAcoCP210 / edificio.resumoFormaEstruturadaTotal;
             //planilhaResumo.Cells[linhaAtual, 6].Value = edificio.resumoAcoCA50CA60 / edificio.resumoConcretoTotal;
             //listaLinhas.Reverse();
-            linhaInicial = 6;
+            int linhaInicial = 6;
             int linhaAtual = linhaInicial;
             bool pintar = true;
             foreach (linhaPlanilha linha in listaLinhas)
@@ -235,7 +234,12 @@ namespace quantitativosExtraidosTQS
                 else { pintar = true; }
                 linhaAtual++;
             }
+            linhaAtual++;
+            for (int numero_coluna = 2; numero_coluna <= 12; numero_coluna++)
+            {
+                planilhaResumo.Cells[linhaAtual, numero_coluna].Formula = "SUM(" + NumeroParaLetra(numero_coluna) + (linhaInicial + 1).ToString() + ":" + NumeroParaLetra(numero_coluna) + (linhaAtual - 1).ToString() + ")";
 
+            }
             planilhaResumo.DeleteRow(linhaInicial);
 
             // Define os cabeçalhos das colunas
@@ -244,7 +248,7 @@ namespace quantitativosExtraidosTQS
         {
             // Adiciona uma nova planilha
             //var planilha = package.Workbook.Worksheets.Add("Entradas");
-            var planilhaDescritiva = pacote.Workbook.Worksheets["Descritivo"];
+            var planilhaDescritiva = pacote.Workbook.Worksheets["Descritivo_Concreto"];
 
             // Define os cabeçalhos das colunas
             // Preenche as células com os dados das pessoas
