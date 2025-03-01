@@ -2,7 +2,7 @@
 
 O **Extrator de Quantitativos TQS** é uma ferramenta desenvolvida para auxiliar engenheiros estruturais na extração manual de quantitativos do programa TQS e exportar esses quantitativos estruturais para Excel. Atualmente, a ferramenta permite a extração de dados de edifícios de Concreto Armado e de Parede de Concreto.
 
-O programa foi criado em **C#** usando **.NET 7.0**.
+O programa foi criado em **C#** usando **.NET 7.0**. Para utilizar o programa é necessário instalar o .NET 7.0, disponível nesse [link](https://dotnet.microsoft.com/pt-br/download/dotnet/thank-you/sdk-7.0.410-windows-x64-installer)
 
 ![Tela de resumo geral](./imagens/Screenshot_1.png)
 
